@@ -92,7 +92,12 @@
         <div id="action-buttons">
           <button id="attack-button">⚔️</button>
           <button id="pick-up-button">✋️</button>
-      </div>
+          <button id="dance-button">💃</button>
+          <button id="hit-button">🥊</button>
+          <button id="run-button">🏃‍♂️</button>
+          <button id="jump-button">🦸‍♂️</button>
+        </div>
+        
     </div>
     
     <script>
@@ -140,8 +145,59 @@ characterImage.onload = function () {
   });
 
 
+  document.getElementById('dance-button').addEventListener('click', () => {
+  // Play a sound effect
+  let soundEffect = new Audio('dance_sound.mp3'); // replace with your sound effect file
+  soundEffect.play();
+
+  // Make the character dance
+  characterImage.src = 'dance_character.png'; // replace with your dancing character image
+  // setTimeout(() => {
+  //   characterImage.src = 'character.png'; // reset the character image
+  // }, 2000);
+});
+
+document.getElementById('hit-button').addEventListener('click', () => {
+  // Play a sound effect
+  let soundEffect = new Audio('hit_sound.mp3'); // replace with your sound effect file
+  soundEffect.play();
+
+  // Make the character hit
+  characterImage.src = 'hit_character.png'; // replace with your hitting character image
+  // setTimeout(() => {
+  //   characterImage.src = 'character.png'; // reset the character image
+  // }, 2000);
+});
+
+document.getElementById('run-button').addEventListener('click', () => {
+  // Play a sound effect
+  let soundEffect = new Audio('run_sound.wav'); // replace with your sound effect file
+  soundEffect.play();
+
+  // Make the character run
+  characterImage.src = 'run_character.png'; // replace with your running character image
+  // setTimeout(() => {
+  //   characterImage.src = 'character.png'; // reset the character image
+  // }, 2000);
+});
+
+document.getElementById('jump-button').addEventListener('click', () => {
+  // Play a sound effect
+  let soundEffect = new Audio('jump_sound.mp3'); // replace with your sound effect file
+  soundEffect.play();
+
+  // Make the character jump
+  characterImage.src = 'jump_character.png'; // replace with your jumping character image
+  // setTimeout(() => {
+  //   characterImage.src = 'character.png'; // reset the character image
+  // }, 2000);
+});
+
+
+
+
   document.getElementById('attack-button').addEventListener('click', () => {
-    handleAttack(characterX, characterY);
+  handleAttack(characterX, characterY);
 });
 document.getElementById('pick-up-button').addEventListener('click', () => {
   // Play a sound effect
@@ -188,31 +244,30 @@ document.getElementById('pick-up-button').addEventListener('click', () => {
   }
 });
 function handleAttack(x, y) {
-    // Play a sound effect
-    let soundEffect = new Audio('attack_sound.wav'); // replace with your sound effect file
-    soundEffect.play();
+  // Create a new layer for the attack effect
+  let effectCtx = canvas.getContext('2d');
+  effectCtx.globalCompositeOperation = 'destination-over'; // Set the z-index
 
-    // Create an animation using the effect.png image
-    let effectImage = new Image();
-    effectImage.src = 'effect.png';
-    effectImage.onload = function () {
-        let frameWidth = 960 / 5; // 192
-        let frameHeight = 1819 / 9; // 202
-        let frameIndex = 0;
-        let animationInterval = setInterval(() => {
-            ctx.drawImage(effectImage,
-                (frameIndex % 5) * frameWidth,
-                Math.floor(frameIndex / 5) * frameHeight,
-                frameWidth, frameHeight,
-                x, y, frameWidth, frameHeight);
-            frameIndex++;
-            if (frameIndex >= 45) {
-                clearInterval(animationInterval);
-            }
-        }, 1000 / 60); // 60fps
-    };
+  // Draw the attack effect
+  let effectImage = new Image();
+  effectImage.src = 'effect.png';
+  effectImage.onload = function () {
+    let frameWidth = 960 / 5; // 192
+    let frameHeight = 1819 / 9; // 202
+    let frameIndex = 0;
+    let animationInterval = setInterval(() => {
+      effectCtx.drawImage(effectImage,
+        (frameIndex % 5) * frameWidth,
+        Math.floor(frameIndex / 5) * frameHeight,
+        frameWidth, frameHeight,
+        x, y, frameWidth, frameHeight);
+      frameIndex++;
+      if (frameIndex >= 45) {
+        clearInterval(animationInterval);
+      }
+    }, 1000 / 60); // 60fps
+  };
 }
-
 
 
   // Define the handleMove function
