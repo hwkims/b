@@ -11,15 +11,15 @@
     }
 
     .no-drag-select {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
 
     .no-drag-select::selection {
-  background: transparent;
-}
+      background: transparent;
+    }
 
     #game-container {
       width: 1920px;
@@ -115,25 +115,57 @@
   <script>
 
 
-    // Get the canvas element
+    // Cache character images and their sizes
+    let characterImages = {};
     let imageUrls = [
       'character.png',
       'dance_character.png',
       'hit_character.png',
       'run_character.png',
       'jump_character.png',
-      'attack-character.png',
-      'mon.png',
-      'map.png'
+      'attack-character.png'
     ];
-
-    let images = [];
 
     for (let i = 0; i < imageUrls.length; i++) {
       let img = new Image();
       img.src = imageUrls[i];
-      images.push(img);
+      characterImages[imageUrls[i]] = {
+        image: img,
+        width: img.width,
+        height: img.height
+      };
     }
+
+    // Preload audio files
+    let audioFiles = [
+      'dance_sound.mp3',
+      'hit_sound.mp3',
+      'run_sound.wav',
+      'jump_sound.mp3',
+      'attack_sound.mp3',
+      'pick_up_sound.wav'
+    ];
+
+    let audioCache = {};
+
+
+
+    for (let i = 0; i < audioFiles.length; i++) {
+      let audio = new Audio(audioFiles[i]);
+      audioCache[audioFiles[i]] = audio;
+    }
+
+
+    // Play a sound effect
+    function playSound(soundFile) {
+      if (audioCache[soundFile]) {
+        audioCache[soundFile].play();
+      } else {
+        console.error(`Sound file not found: ${soundFile}`);
+      }
+    }
+
+
     let canvas = document.getElementById('game-canvas');
     let ctx = canvas.getContext('2d');
 
@@ -174,60 +206,56 @@
         handleMove(characterX, characterY);
       });
 
+      function changeCharacterImage(imageName, soundFile) {
+        playSound(soundFile);
+        const image = characterImages[imageName];
+
+        const newImage = new Image();
+        newImage.src = image.image.src;
+        newImage.onload = function () {
+          characterImage = newImage;
+          characterWidth = newImage.width;
+          characterHeight = newImage.height;
+          frameWidth = characterWidth / 4;
+          frameHeight = characterHeight / 4;
+        };
+      }
 
       document.getElementById('dance-button').addEventListener('click', () => {
-        // Play a sound effect
-        let soundEffect = new Audio('dance_sound.mp3'); // replace with your sound effect file
-        soundEffect.play();
-
-
-        characterImage.src = 'dance_character.png'; // replace with your dancing character image
-
+        setTimeout(() => {
+          changeCharacterImage('dance_character.png', 'dance_sound.mp3');
+        }, 200); // 200ms delay
       });
 
       document.getElementById('hit-button').addEventListener('click', () => {
-        // Play a sound effect
-        let soundEffect = new Audio('hit_sound.mp3'); // replace with your sound effect file
-        soundEffect.play();
-
-        characterImage.src = 'hit_character.png'; // replace with your hitting character image
-
+        setTimeout(() => {
+          changeCharacterImage('hit_character.png', 'hit_sound.mp3');
+        }, 200); // 200ms delay
       });
 
       document.getElementById('run-button').addEventListener('click', () => {
-        // Play a sound effect
-        let soundEffect = new Audio('run_sound.wav'); // replace with your sound effect file
-        soundEffect.play();
-
-
-        characterImage.src = 'run_character.png'; // replace with your running character image
-
+        setTimeout(() => {
+          changeCharacterImage('run_character.png', 'run_sound.wav');
+        }, 200); // 200ms delay
       });
 
       document.getElementById('jump-button').addEventListener('click', () => {
-        // Play a sound effect
-        let soundEffect = new Audio('jump_sound.mp3'); // replace with your sound effect file
-        soundEffect.play();
-
-
-        characterImage.src = 'jump_character.png'; // replace with your jumping character image
-
+        setTimeout(() => {
+          changeCharacterImage('jump_character.png', 'jump_sound.mp3');
+        }, 200); // 200ms delay
       });
 
       document.getElementById('attack-button').addEventListener('click', () => {
-
-        let soundEffect = new Audio('attack_sound.mp3'); // replace with your sound effect file
-        soundEffect.play();
-        characterImage.src = 'attack-character.png'; // replace with your character image
+        setTimeout(() => {
+          changeCharacterImage('attack-character.png', 'attack_sound.mp3');
+        }, 200); // 200ms delay
       });
+
       document.getElementById('pick-up-button').addEventListener('click', () => {
-        // Play a sound effect
-        let soundEffect = new Audio('pick_up_sound.wav'); // replace with your sound effect file
-        soundEffect.play();
-
-        characterImage.src = 'character.png'; // replace with your character image
+        setTimeout(() => {
+          changeCharacterImage('character.png', 'pick_up_sound.wav');
+        }, 200); // 200ms delay
       });
-
 
 
       // Define the handleMove function
