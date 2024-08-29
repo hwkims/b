@@ -184,6 +184,8 @@
       let frameIndex = 0; // Current frame index
       let direction = 0; // Current direction (0-3)
       let speed = 5; // Movement speed
+      let score = 0; // Initialize score
+      let level = 1; // Initialize level
 
       // Add event listeners to the buttons
       document.getElementById('arrow-up').addEventListener('click', () => {
@@ -224,38 +226,59 @@
       document.getElementById('dance-button').addEventListener('click', () => {
         setTimeout(() => {
           changeCharacterImage('dance_character.png', 'dance_sound.mp3');
-        }, 200); // 200ms delay
+        }, 2000); // 200ms delay
+        monsterImage.src = 'mon1.png';
       });
 
       document.getElementById('hit-button').addEventListener('click', () => {
         setTimeout(() => {
           changeCharacterImage('hit_character.png', 'hit_sound.mp3');
-        }, 200); // 200ms delay
+        }, 2000); // 200ms delay
+        monsterImage.src = 'mon.png';
       });
 
       document.getElementById('run-button').addEventListener('click', () => {
         setTimeout(() => {
           changeCharacterImage('run_character.png', 'run_sound.wav');
-        }, 200); // 200ms delay
+        }, 2000); // 200ms delay
       });
 
       document.getElementById('jump-button').addEventListener('click', () => {
         setTimeout(() => {
           changeCharacterImage('jump_character.png', 'jump_sound.mp3');
-        }, 200); // 200ms delay
+        }, 2000); // 200ms delay
       });
 
       document.getElementById('attack-button').addEventListener('click', () => {
         setTimeout(() => {
           changeCharacterImage('attack-character.png', 'attack_sound.mp3');
-        }, 200); // 200ms delay
-      });
+        }, 2000); // 200ms delay
+      
+  // Get the closest monster to the character
+  let closestMonster = null;
+  let closestDistance = Infinity;
+  for (let i = 0; i < monsters.length; i++) {
+    let distance = Math.sqrt(Math.pow(monsters[i].x - characterX, 2) + Math.pow(monsters[i].y - characterY, 2));
+    if (distance < closestDistance) {
+      closestMonster = monsters[i];
+      closestDistance = distance;
+    }
+  }
+
+  // Attack the closest monster
+  if (closestMonster) {
+    attack(closestMonster);
+  }
+});
 
       document.getElementById('pick-up-button').addEventListener('click', () => {
         setTimeout(() => {
           changeCharacterImage('character.png', 'pick_up_sound.wav');
-        }, 200); // 200ms delay
+        }, 2000); // 200ms delay
       });
+
+
+
 
 
       // Define the handleMove function
@@ -296,7 +319,10 @@
           this.frameHeight = monsterImage.height / 4;
           this.timer = 0; // add a timer property
           this.changeDirectionTimer = 0; // add a timer for changing direction
-        }
+  this.health = 100; // add a health property
+  this.isBeingAttacked = false; // add a flag to track if it's being attacked
+
+}
 
         // Add Monster properties and methods
         Monster.prototype.update = function () {
@@ -351,7 +377,32 @@
             this.direction * this.frameHeight,
             this.frameWidth, this.frameHeight,
             this.x, this.y, this.frameWidth, this.frameHeight);
-        };
+       
+  // Draw the health bar only when the monster is being attacked
+  if (this.isBeingAttacked) {
+    ctx.fillStyle = 'red';
+    ctx.fillRect(this.x, this.y - 10, this.health / 100 * this.frameWidth, 5);
+  }
+
+};
+// Update the attack function to set the isBeingAttacked flag
+function attack(monster) {
+  // Reduce the monster's health
+  monster.health -= 10;
+  monster.isBeingAttacked = true;
+
+  // Check if the monster is dead
+  if (monster.health <= 0) {
+    // Remove the monster from the array
+    monsters.splice(monsters.indexOf(monster), 1);
+
+  }
+  monster.isBeingAttacked = true;
+  setTimeout(() => {
+    monster.isBeingAttacked = false;
+  }, 500); // reset the flag after 500ms
+}
+
 
         // Create an array of monsters
         let monsters = [];
